@@ -5,6 +5,7 @@
  */ 
 
 import * as paper from 'paper';
+import { view } from 'paper/dist/paper-core';
 
 class Game 
 {
@@ -30,8 +31,8 @@ class Game
 
     start() : void 
     {
-        this.createScene();
         this.resize();
+        this.createScene();      
 
         // This registers the event handlers for window and mouse events
         paper.view.onResize = () => {this.resize();};
@@ -75,28 +76,27 @@ class Game
         rectInstance2.addTo(this.childNode2);
 
         // perform an initial translation of the parent node
-        this.parentNode.translate(new paper.Point(200, 200));
+        this.parentNode.translate(paper.view.center.subtract(new paper.Point(100, 150)));
 
         // create some text and place it at the center of the bottom of the view
-        this.text1 = new paper.PointText(new paper.Point(0, 0));
+        this.text1 = new paper.PointText(new paper.Point(paper.view.center.x, 700));
         this.text1.fontSize = 24;
         this.text1.content = 'Click the red box to select the parent node. Click the purple box to select the child node.';
         this.text1.justification = 'center';
-        this.text1.position = new paper.Point(paper.view.center.x - 50, paper.view.size.height - 50);
 
         // create some text and place it at the center of the bottom of the view
-        this.text2 = new paper.PointText(new paper.Point(0, 0));
-        this.text2.fontSize = 30;
+        this.text2 = new paper.PointText(new paper.Point(paper.view.center.x, 700));
+        this.text2.fontSize = 24;
         this.text2.content = 'Press r to rotate.  Press s to scale.';
         this.text2.justification = 'center';
-        this.text2.position = new paper.Point(paper.view.center.x - 50, paper.view.size.height - 50);
         this.text2.visible = false;
     }
 
     // This method will be called once per frame
     private update(event: GameEvent) : void
     {
-        
+        //this.text1!.position = new paper.Point(paper.view.center.x, 700);
+        //this.text2!.position = new paper.Point(paper.view.center.x, 700);
     }
 
     private onKeyDown(event: paper.KeyEvent) : void
