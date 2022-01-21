@@ -5,7 +5,6 @@
  */ 
 
 import * as paper from 'paper';
-import { view } from 'paper/dist/paper-core';
 
 class Game 
 {
@@ -18,8 +17,8 @@ class Game
     private childNode2 : paper.Group | undefined;
     private selectedNode : paper.Item | undefined;
     private lastMousePoint : paper.Point;
-    private text1 : paper.PointText | undefined;
-    private text2 : paper.PointText | undefined;
+    private instructionsText : paper.PointText | undefined;
+    //private coordinatesText : paper.PointText | undefined;
     
     constructor()
     {
@@ -79,24 +78,30 @@ class Game
         this.parentNode.translate(paper.view.center.subtract(new paper.Point(100, 150)));
 
         // create some text and place it at the center of the bottom of the view
-        this.text1 = new paper.PointText(new paper.Point(paper.view.center.x, 700));
-        this.text1.fontSize = 24;
-        this.text1.content = 'Click the red box to select the parent node. Click the purple box to select the child node.';
-        this.text1.justification = 'center';
+        this.instructionsText = new paper.PointText(new paper.Point(paper.view.center.x, 700));
+        this.instructionsText.fontSize = 24;
+        this.instructionsText.content = 'Click the red box to select the parent node. Click the purple box to select the child node.';
+        this.instructionsText.justification = 'center';
 
-        // create some text and place it at the center of the bottom of the view
-        this.text2 = new paper.PointText(new paper.Point(paper.view.center.x, 700));
-        this.text2.fontSize = 24;
-        this.text2.content = 'Press r to rotate.  Press s to scale.';
-        this.text2.justification = 'center';
-        this.text2.visible = false;
+        /*
+        this.coordinatesText = new paper.PointText(new paper.Point(paper.view.center.x, 740));
+        this.coordinatesText.fontSize = 18;
+        this.coordinatesText.content = 'Local coordinates: ';
+        this.coordinatesText.justification = 'center';
+        this.coordinatesText.visible = false;
+        */
     }
 
     // This method will be called once per frame
     private update(event: GameEvent) : void
     {
-        //this.text1!.position = new paper.Point(paper.view.center.x, 700);
-        //this.text2!.position = new paper.Point(paper.view.center.x, 700);
+        if(this.selectedNode)
+        {
+            //var content = 'Global coordinates: ' + Math.round(this.selectedNode!.firstChild.position.x);
+            //content += ', ' + Math.round(this.selectedNode!.firstChild.position.y);
+            //this.coordinatesText!.content = content;
+        }
+        
     }
 
     private onKeyDown(event: paper.KeyEvent) : void
@@ -132,8 +137,7 @@ class Game
         if(this.selectedNode)
         {
             this.selectedNode = undefined;
-            this.text1!.visible = true;
-            this.text2!.visible = false;
+            this.instructionsText!.content = 'Click the red box to select the parent node. Click the purple box to select the child node.'
         }
         // if we have not selected a node, conduct a hit test
         else
@@ -146,8 +150,7 @@ class Game
 
             if(this.selectedNode)
             {
-                this.text1!.visible = false;
-                this.text2!.visible = true;
+                this.instructionsText!.content = 'Press r to rotate.  Press s to scale.'
             }
         }
     }  
