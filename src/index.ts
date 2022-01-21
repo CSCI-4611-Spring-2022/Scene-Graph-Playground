@@ -5,7 +5,6 @@
  */ 
 
 import * as paper from 'paper';
-import { Point } from 'paper/dist/paper-core';
 
 class Game 
 {
@@ -17,13 +16,14 @@ class Game
     private childNode : paper.Group | undefined;
     private selectedNode : paper.Item | undefined;
     private lastMousePoint : paper.Point;
+    private text : paper.PointText | undefined;
     
     constructor()
     {
         paper.setup('canvas');
         this.width = 1200;
         this.height = 800;
-        this.lastMousePoint = new Point(0, 0);
+        this.lastMousePoint = new paper.Point(0, 0);
     }
 
     start() : void 
@@ -40,23 +40,37 @@ class Game
 
     private createScene() : void 
     {
+        // create a parent and child screne graph node
         this.parentNode = new paper.Group();
         this.childNode = new paper.Group();
         this.childNode.addTo(this.parentNode);
 
+        // create the rectangle geometry
         var rectGeometry = new paper.Rectangle(new paper.Point(0, 0), new paper.Size(50, 50));
         var drawableRect = new paper.Path.Rectangle(rectGeometry);
         drawableRect.fillColor = new paper.Color('purple');
 
+        // create a symbol from the rectangle geometry
         var rectSymbol = new paper.SymbolDefinition(drawableRect);
 
-        var rectInstance1 = rectSymbol.place(new Point(0, 0));
-        rectInstance1.addTo(this.parentNode);
+        // create two instances of the rectangle
+        var rectInstance1 = rectSymbol.place(new paper.Point(0, 0));
+        var rectInstance2 = rectSymbol.place(new paper.Point(200, 0));
 
-        var rectInstance2 = rectSymbol.place(new Point(200, 0));
+        // add one instance to the parent node and one instance to the child node
+        rectInstance1.addTo(this.parentNode);
         rectInstance2.addTo(this.childNode);
 
-        this.parentNode.translate(new Point(200, 200));
+        // perform an initial translation of the parent node
+        this.parentNode.translate(new paper.Point(200, 200));
+
+        // create some text and place it at the center of the bottom of the view
+        this.text = new paper.PointText(new paper.Point(0, 0));
+        this.text.fontSize = 30;
+        this.text.content = 'Press r to rotate.  Press s to scale.';
+        this.text.justification = 'center';
+        this.text.position = new paper.Point(paper.view.center.x - 50, paper.view.size.height - 50);
+        this.text.visible = true;
     }
 
     // This method will be called once per frame
@@ -67,6 +81,7 @@ class Game
 
     private onMouseMove(event: paper.MouseEvent) : void
     {
+        // if a node is currently selected, translate it by the amount the mouse has moved
         if(this.selectedNode)
             this.selectedNode.translate(event.point.subtract(this.lastMousePoint));
 
@@ -75,10 +90,13 @@ class Game
 
     private onMouseDown(event: paper.MouseEvent) : void
     {
+        // if we have a currently selected node, then drop it
         if(this.selectedNode)
         {
             this.selectedNode = undefined;
+            this.text!.visible = false;
         }
+        // if we have not selected a node, conduct a hit test
         else
         {
             // conduct a hit test for everything in the scene
@@ -86,6 +104,7 @@ class Game
 
             // get the group node, which is the parent of the drawable item
             this.selectedNode = hits.at(0)?.item.parent;
+            this.text!.visible = true;
         }
     }  
 
