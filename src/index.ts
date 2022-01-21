@@ -1,4 +1,4 @@
-/* Lecture 2
+/* Scene Graph Playground
  * CSCI 4611, Spring 2022, University of Minnesota
  * Instructor: Evan Suma Rosenberg <suma@umn.edu>
  * License: Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
