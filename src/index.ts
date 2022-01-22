@@ -5,6 +5,7 @@
  */ 
 
 import * as paper from 'paper';
+import { Point } from 'paper/dist/paper-core';
 
 class Game 
 {
@@ -17,8 +18,11 @@ class Game
     private childNode2 : paper.Group | undefined;
     private selectedNode : paper.Item | undefined;
     private lastMousePoint : paper.Point;
+
     private instructionsText : paper.PointText | undefined;
-    //private coordinatesText : paper.PointText | undefined;
+    private parentNodeText : paper.PointText | undefined;
+    private child1Text : paper.PointText | undefined;
+    private child2Text : paper.PointText | undefined;
     
     constructor()
     {
@@ -43,13 +47,14 @@ class Game
 
     private createScene() : void 
     {
-        // create a parent and two child screne graph nodes
-        this.parentNode = new paper.Group();
-        this.childNode1 = new paper.Group();
-        this.childNode2 = new paper.Group();
-        this.childNode1.addTo(this.parentNode);
-        this.childNode2.addTo(this.parentNode);
+        // create a border around the view
+        var borderGeometry = new paper.Rectangle(new paper.Point(0, 0), new paper.Size(this.width, this.height));
+        var border = new paper.Path.Rectangle(borderGeometry);
+        border.strokeWidth = 10;
+        border.strokeColor = new paper.Color('black');
 
+        // create a parent scene graph node
+        this.parentNode = new paper.Group();
         // create the rectangle geometry
         var rectGeometry = new paper.Rectangle(new paper.Point(0, 0), new paper.Size(50, 50));
 
@@ -58,6 +63,12 @@ class Game
         redDrawableRect.fillColor = new paper.Color('red');
         redDrawableRect.position = new paper.Point(0, 0);
         redDrawableRect.addTo(this.parentNode);
+
+        // create two child nodes
+        this.childNode1 = new paper.Group();
+        this.childNode2 = new paper.Group();
+        this.childNode1.addTo(this.parentNode);
+        this.childNode2.addTo(this.parentNode);
         
         // create a purple drawable rectangle from the geometry
         var purpleDrawableRect = new paper.Path.Rectangle(rectGeometry);
@@ -75,7 +86,7 @@ class Game
         rectInstance2.addTo(this.childNode2);
 
         // perform an initial translation of the parent node
-        this.parentNode.translate(paper.view.center.subtract(new paper.Point(100, 150)));
+        //this.parentNode.translate(paper.view.center.subtract(new paper.Point(100, 150)));
 
         // create some text and place it at the center of the bottom of the view
         this.instructionsText = new paper.PointText(new paper.Point(paper.view.center.x, 700));
@@ -83,25 +94,43 @@ class Game
         this.instructionsText.content = 'Click the red box to select the parent node. Click the purple box to select the child node.';
         this.instructionsText.justification = 'center';
 
-        /*
-        this.coordinatesText = new paper.PointText(new paper.Point(paper.view.center.x, 740));
-        this.coordinatesText.fontSize = 18;
-        this.coordinatesText.content = 'Local coordinates: ';
-        this.coordinatesText.justification = 'center';
-        this.coordinatesText.visible = false;
-        */
+        this.parentNodeText = new paper.PointText(redDrawableRect.position.add(new Point(0, 50)));
+        this.parentNodeText.fontSize = 18;
+        this.parentNodeText.justification = 'center';
+        this.parentNodeText.addTo(this.parentNode);
+        this.parentNodeText.visible = true;
+
+        this.child1Text = new paper.PointText(rectInstance1.position.add(new Point(0, 50)));
+        this.child1Text.fontSize = 18;
+        this.child1Text.justification = 'center';
+        this.child1Text.addTo(this.childNode1);
+        this.child1Text.visible = true;
+
+        this.child2Text = new paper.PointText(rectInstance2.position.add(new Point(0, 50)));
+        this.child2Text.fontSize = 18;
+        this.child2Text.justification = 'center';
+        this.child2Text.addTo(this.childNode2);
+        this.child2Text.visible = true;
+
+        
     }
 
     // This method will be called once per frame
     private update(event: GameEvent) : void
     {
-        if(this.selectedNode)
-        {
-            //var content = 'Global coordinates: ' + Math.round(this.selectedNode!.firstChild.position.x);
-            //content += ', ' + Math.round(this.selectedNode!.firstChild.position.y);
-            //this.coordinatesText!.content = content;
-        }
-        
+        // update all the text items with the local and global positions
+        var parentPosGlobal = this.parentNode!.firstChild.position;
+        this.parentNodeText!.content = "global: (" + Math.round(parentPosGlobal.x) + ", " + Math.round(parentPosGlobal.y) + ")";
+
+        var child1PosGlobal = this.childNode1!.firstChild.position;
+        var child1PosLocal = this.childNode1!.firstChild.globalToLocal(parentPosGlobal);
+        this.child1Text!.content = "global: (" + Math.round(child1PosGlobal.x) + ", " + Math.round(child1PosGlobal.y) + ")";
+        this.child1Text!.content += "\nlocal: (" + Math.round(-child1PosLocal.x) + ", " + Math.round(-child1PosLocal.y) + ")";
+
+        var child2PosGlobal = this.childNode2!.firstChild.position;
+        var child2PosLocal = this.childNode2!.firstChild.globalToLocal(parentPosGlobal);
+        this.child2Text!.content = "global: (" + Math.round(child2PosGlobal.x) + ", " + Math.round(child2PosGlobal.y) + ")";
+        this.child2Text!.content += "\nlocal: (" + Math.round(-child2PosLocal.x) + ", " + Math.round(-child2PosLocal.y) + ")";
     }
 
     private onKeyDown(event: paper.KeyEvent) : void
@@ -111,7 +140,8 @@ class Game
             if(event.key == 'r')
             {
                 // rotate the node by 10 degrees
-                this.selectedNode.rotate(10, this.lastMousePoint);
+                this.selectedNode.rotate(10, this.selectedNode.firstChild.position);
+                console.log(this.selectedNode);
             }
             else if(event.key == 's')
             {
