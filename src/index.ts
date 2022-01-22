@@ -86,7 +86,7 @@ class Game
         rectInstance2.addTo(this.childNode2);
 
         // perform an initial translation of the parent node
-        //this.parentNode.translate(paper.view.center.subtract(new paper.Point(100, 150)));
+        this.parentNode.translate(paper.view.center.subtract(new paper.Point(100, 150)));
 
         // create some text and place it at the center of the bottom of the view
         this.instructionsText = new paper.PointText(new paper.Point(paper.view.center.x, 700));
