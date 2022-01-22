@@ -91,7 +91,7 @@ class Game
         // create some text and place it at the center of the bottom of the view
         this.instructionsText = new paper.PointText(new paper.Point(paper.view.center.x, 700));
         this.instructionsText.fontSize = 24;
-        this.instructionsText.content = 'Click the red box to select the parent node. Click the purple box to select the child node.';
+        this.instructionsText.content = 'Click the red box to select the parent node. Click a purple box to select a child node.';
         this.instructionsText.justification = 'center';
 
         this.parentNodeText = new paper.PointText(redDrawableRect.position.add(new Point(0, 50)));
