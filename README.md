@@ -2,7 +2,7 @@
 
 This interactive [Paper.js](http://paperjs.org/) example demonstrates how 2D transformations are applied to parent and child nodes in a scene graph.  As an added bonus, it also shows how to create multiple instances of a geometric object using a symbol.
 
-You can run the program here: https://csci-4611-spring-2022.github.io/Scene-Graph-Playground/
+You can run the program on [GitHub pages](https://csci-4611-spring-2022.github.io/Scene-Graph-Playground/).
 
 ## Prerequisites
 
